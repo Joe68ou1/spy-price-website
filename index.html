@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPY Price</title>
+    <style>
+        body {
+            background-color: black;
+            color: limegreen;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        #price-container {
+            border: 2px solid limegreen;
+            padding: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="price-container">
+        <h1>SPY Price: <span id="price">Loading...</span></h1>
+    </div>
+
+    <script>
+        async function fetchSPYPrice() {
+            const url = 'http://127.0.0.1:5000/api/spy-price';
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                
+                console.log('API Response:', data);
+                
+                const price = data.price;
+
+                if (price !== undefined) {
+                    document.getElementById('price').innerText = `$${price.toFixed(2)}`;
+                } else {
+                    throw new Error('Price data is unavailable');
+                }
+            } catch (error) {
+                document.getElementById('price').innerText = 'Error fetching price';
+                console.error('Error fetching price:', error);
+            }
+        }
+
+        // Fetch price every minute (60000 milliseconds)
+        setInterval(fetchSPYPrice, 60000);
+
+        // Initial fetch
+        fetchSPYPrice();
+    </script>
+</body>
+</html>
